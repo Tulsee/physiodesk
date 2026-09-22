@@ -3,8 +3,19 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.routes import auth
+from app.api.routes import (
+    auth,
+    billing,
+    clinical_notes,
+    dashboard,
+    notifications,
+    patients,
+    reports,
+    schedule,
+    therapists,
+)
 from app.core.config import settings
+from app.core.errors import register_exception_handlers
 
 
 def create_app() -> FastAPI:
@@ -31,6 +42,16 @@ def create_app() -> FastAPI:
         return {"status": "ok"}
 
     app.include_router(auth.router)
+    app.include_router(therapists.router)
+    app.include_router(patients.router)
+    app.include_router(clinical_notes.router)
+    app.include_router(reports.router)
+    app.include_router(schedule.router)
+    app.include_router(billing.router)
+    app.include_router(notifications.router)
+    app.include_router(dashboard.router)
+
+    register_exception_handlers(app)
 
     return app
 
