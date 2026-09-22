@@ -34,8 +34,8 @@ yarn-error.log*
 !.env.example
 
 # ---- Uploads / runtime data ----
-uploads/
-!uploads/.gitkeep
+**/uploads/*
+!**/uploads/.gitkeep
 postgres-data/
 
 # ---- Editors / OS ----
