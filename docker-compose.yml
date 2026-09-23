@@ -19,5 +19,55 @@ services:
       timeout: 5s
       retries: 10
 
+  api:
+    build:
+      context: ./backend
+    container_name: physiodesk-api
+    restart: unless-stopped
+    environment:
+      # Inside the compose network the database is reachable as "db" on 5432,
+      # regardless of which host port is published above.
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-physiodesk}:${POSTGRES_PASSWORD:-physiodesk}@db:5432/${POSTGRES_DB:-physiodesk}
+      JWT_SECRET: ${JWT_SECRET:-change-me-in-production}
+      JWT_EXPIRE_MINUTES: ${JWT_EXPIRE_MINUTES:-480}
+      UPLOAD_DIR: /app/uploads
+      MAX_UPLOAD_MB: ${MAX_UPLOAD_MB:-10}
+      # The browser calls the API from the host, so CORS must allow the host origin.
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000}
+      SEED_ADMIN_USERNAME: ${SEED_ADMIN_USERNAME:-frontdesk}
+      SEED_ADMIN_PASSWORD: ${SEED_ADMIN_PASSWORD:-physiodesk123}
+      # Set to false to start with an empty database.
+      SEED_ON_START: ${SEED_ON_START:-true}
+    ports:
+      - "${API_PORT:-8000}:8000"
+    volumes:
+      # Uploaded files outlive the container.
+      - physiodesk-uploads:/app/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/health')\""]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+
+  web:
+    build:
+      context: ./frontend
+      args:
+        # NEXT_PUBLIC_* is inlined at build time. This is the URL the *browser*
+        # uses, so it is the host-published port, not the internal service name.
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
+    container_name: physiodesk-web
+    restart: unless-stopped
+    ports:
+      - "${WEB_PORT:-3000}:3000"
+    depends_on:
+      api:
+        condition: service_started
+
 volumes:
   physiodesk-postgres-data:
+  physiodesk-uploads:
