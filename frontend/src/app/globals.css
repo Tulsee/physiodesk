@@ -1,0 +1,79 @@
+@import "tailwindcss";
+
+/*
+ * Tailwind v4 keeps theme configuration in CSS rather than a tailwind.config.ts.
+ * Tokens declared in @theme become utilities: --color-brand-600 gives
+ * bg-brand-600, text-brand-600, border-brand-600 and so on.
+ */
+@theme {
+  /* Teal reads as clinical without the coldness of a pure medical blue. */
+  --color-brand-50: #eefbf6;
+  --color-brand-100: #d5f5e8;
+  --color-brand-200: #aeead4;
+  --color-brand-300: #79d9ba;
+  --color-brand-400: #43c09c;
+  --color-brand-500: #1fa583;
+  --color-brand-600: #12846a;
+  --color-brand-700: #106a57;
+  --color-brand-800: #105446;
+  --color-brand-900: #0f463b;
+
+  --color-ink-50: #f7f8f8;
+  --color-ink-100: #eeeff1;
+  --color-ink-200: #d9dce0;
+  --color-ink-300: #b8bec6;
+  --color-ink-400: #909aa5;
+  --color-ink-500: #737e8b;
+  --color-ink-600: #5c6672;
+  --color-ink-700: #4b535d;
+  --color-ink-800: #40464e;
+  --color-ink-900: #383d44;
+  --color-ink-950: #24272c;
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
+:root {
+  --surface: #f6f7f9;
+  --card: #ffffff;
+  --border: #e6e8ec;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: var(--surface);
+  color: var(--color-ink-900);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Consistent focus ring on anything interactive, rather than per-component. */
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--color-brand-500);
+  outline-offset: 2px;
+  border-radius: 0.375rem;
+}
+
+/* Number inputs: the spinners are noise on money and score fields. */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+@media print {
+  /* Receipts print without the surrounding chrome. */
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: #fff;
+  }
+}
