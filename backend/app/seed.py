@@ -780,15 +780,15 @@ def seed_notifications(db, patients: list[Patient]) -> list[Notification]:
 def run(reset: bool = False) -> int:
     db = SessionLocal()
     try:
-        if already_seeded(db):
-            if not reset:
-                print(
-                    "Database already contains data. Nothing to do.\n"
-                    "Re-run with --reset to wipe the domain tables and seed again."
-                )
-                return 0
+        if reset:
             print("Wiping existing domain data...")
             wipe(db)
+        elif already_seeded(db):
+            print(
+                "Database already contains data. Nothing to do.\n"
+                "Re-run with --reset to wipe the domain tables and seed again."
+            )
+            return 0
 
         print("Seeding PhysioDesk demo data...")
         user = seed_user(db)

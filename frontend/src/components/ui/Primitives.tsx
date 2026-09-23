@@ -96,7 +96,8 @@ export function Card({
   children,
   className = "",
 }: {
-  children: ReactNode;
+  // Optional so a Card can serve as an empty skeleton placeholder.
+  children?: ReactNode;
   className?: string;
 }) {
   return (

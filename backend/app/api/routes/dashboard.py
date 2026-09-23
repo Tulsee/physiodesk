@@ -191,12 +191,16 @@ def get_recent_patients(
     Ordered by their latest non-cancelled appointment, so a patient booked far
     in advance does not jump the list.
     """
+    today = dt.date.today()
     last_visit = (
         select(
             Appointment.patient_id.label("patient_id"),
             func.max(Appointment.date).label("last_visit"),
         )
-        .where(Appointment.status.in_(scheduling.BLOCKING_STATUSES))
+        .where(
+            Appointment.status.in_(scheduling.BLOCKING_STATUSES),
+            Appointment.date <= today,
+        )
         .group_by(Appointment.patient_id)
         .subquery()
     )
