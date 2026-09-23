@@ -154,25 +154,33 @@ export function AppointmentForm({
               hint={
                 slots.isLoading
                   ? "Checking availability…"
-                  : column?.is_off
+                  : slots.error || column?.is_off
                     ? undefined
                     : `${available.length} slot${available.length === 1 ? "" : "s"} free.`
               }
               error={
-                column?.is_off
-                  ? `${appointment?.therapist_name} is not working then — ${column.off_reason}.`
-                  : undefined
+                // A failed availability lookup must say so: an empty dropdown
+                // otherwise reads as "fully booked".
+                slots.error
+                  ? `Could not check availability — ${slots.error}`
+                  : column?.is_off
+                    ? `${appointment?.therapist_name} is not working then — ${column.off_reason}.`
+                    : undefined
               }
             >
               <Select
                 id="appt-time"
                 value={newTime}
                 onChange={(e) => setNewTime(e.target.value)}
-                disabled={slots.isLoading || available.length === 0}
-                error={Boolean(column?.is_off)}
+                disabled={slots.isLoading || Boolean(slots.error) || available.length === 0}
+                error={Boolean(slots.error || column?.is_off)}
               >
                 <option value="">
-                  {slots.isLoading ? "Loading…" : "Choose a slot"}
+                  {slots.isLoading
+                    ? "Loading…"
+                    : slots.error
+                      ? "Unavailable"
+                      : "Choose a slot"}
                 </option>
                 {available.map((s) => (
                   <option key={s.time} value={s.time}>
