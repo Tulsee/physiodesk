@@ -1,13 +1,10 @@
 # PhysioDesk
 
-Clinic management system for a physiotherapy practice — patients, therapists,
+Clinic management system for a physiotherapy practice patients, therapists,
 scheduling, clinical notes, billing and notifications.
 
 **Stack:** Next.js 16 (App Router, TypeScript, Tailwind v4) · FastAPI (Python 3.12,
 Pydantic v2) · PostgreSQL 16 · SQLAlchemy 2.x + Alembic · JWT auth · Docker Compose.
-
-[PLAN.md](PLAN.md) is the build plan; [WORKLOG.md](WORKLOG.md) records what each
-phase delivered, the decisions behind it, and the bugs found along the way.
 
 ---
 
@@ -23,12 +20,12 @@ docker compose up --build
 That builds all three images, waits for PostgreSQL, applies the migrations and
 seeds demo data. Roughly 3–4 minutes on a cold build, ~15 seconds afterwards.
 
-| | |
-| --- | --- |
-| App | <http://localhost:3000> |
-| API | <http://localhost:8000> |
-| API docs (Swagger UI) | <http://localhost:8000/docs> |
-| Sign in | `frontdesk` / `physiodesk123` |
+|                       |                                                         |
+| --------------------- | ------------------------------------------------------- |
+| App                   | [http://localhost:3000](http://localhost:3000)           |
+| API                   | [http://localhost:8000](http://localhost:8000)           |
+| API docs (Swagger UI) | [http://localhost:8000/docs](http://localhost:8000/docs) |
+| Sign in               | `frontdesk` / `physiodesk123`                       |
 
 Stop with `docker compose down`, or `docker compose down -v` to discard the
 database and uploaded files too.
@@ -40,7 +37,7 @@ database and uploaded files too.
 
 ## Running it locally, without Docker
 
-Useful for development — hot reload on both sides. You still need the database
+Useful for development hot reload on both sides. You still need the database
 container (or any PostgreSQL 16).
 
 **1. Environment**
@@ -85,15 +82,15 @@ Idempotent (running it twice changes nothing without `--reset`) and
 deterministic, so every machine gets identical data. Dates are generated
 relative to today, so the dashboard and schedule always show current activity.
 
-| Data | Rows | Coverage |
-| ---- | ---- | -------- |
-| Therapists | 4 | Different work days, hours and slot lengths (30/45/60 min); one works Saturdays, one afternoons only |
-| Schedule overrides | 3 | A day off, a late start, and an extra clinic added to a normal day off |
-| Patients | 15 | Active, on-hold and discharged |
-| Appointments | 52 | Past four weeks, today, and the next fortnight; all four statuses |
-| Clinical notes | 89 | Multi-session histories with trending scores and milestones |
-| Invoices | 35 | All four statuses, some discounted, each with a payment ledger |
-| Notifications | 10 | Every type, channel and status, including a failure with its reason |
+| Data               | Rows | Coverage                                                                                             |
+| ------------------ | ---- | ---------------------------------------------------------------------------------------------------- |
+| Therapists         | 4    | Different work days, hours and slot lengths (30/45/60 min); one works Saturdays, one afternoons only |
+| Schedule overrides | 3    | A day off, a late start, and an extra clinic added to a normal day off                               |
+| Patients           | 15   | Active, on-hold and discharged                                                                       |
+| Appointments       | 52   | Past four weeks, today, and the next fortnight; all four statuses                                    |
+| Clinical notes     | 89   | Multi-session histories with trending scores and milestones                                          |
+| Invoices           | 35   | All four statuses, some discounted, each with a payment ledger                                       |
+| Notifications      | 10   | Every type, channel and status, including a failure with its reason                                  |
 
 Appointments are placed through the real slot engine, so no seeded row could
 break a rule the API enforces.
@@ -183,19 +180,19 @@ separate table, so the ledger is append-only and the balance is just a sum.
 
 See [.env.example](.env.example) for the annotated list.
 
-| Variable | Default | Purpose |
-| -------- | ------- | ------- |
-| `POSTGRES_USER` / `POSTGRES_PASSWORD` / `POSTGRES_DB` | `physiodesk` | Database credentials |
-| `POSTGRES_PORT` | `5432` | Host port for PostgreSQL |
-| `API_PORT` / `WEB_PORT` | `8000` / `3000` | Host ports for the API and app |
-| `DATABASE_URL` | localhost | SQLAlchemy URL (compose overrides this to reach `db`) |
-| `JWT_SECRET` | `change-me-in-production` | Token signing key — **replace for any real deployment** |
-| `JWT_EXPIRE_MINUTES` | `480` | Token lifetime |
-| `UPLOAD_DIR` / `MAX_UPLOAD_MB` | `uploads` / `10` | Where report files go, and the size cap |
-| `CORS_ORIGINS` | `http://localhost:3000` | Comma-separated allowed browser origins |
-| `SEED_ADMIN_USERNAME` / `SEED_ADMIN_PASSWORD` | `frontdesk` / `physiodesk123` | Account the seed script creates |
-| `SEED_ON_START` | `true` | Set `false` to start the container with an empty database |
-| `NEXT_PUBLIC_API_URL` | `http://localhost:8000` | API base URL, **inlined at build time** |
+| Variable                                                    | Default                           | Purpose                                                       |
+| ----------------------------------------------------------- | --------------------------------- | ------------------------------------------------------------- |
+| `POSTGRES_USER` / `POSTGRES_PASSWORD` / `POSTGRES_DB` | `physiodesk`                    | Database credentials                                          |
+| `POSTGRES_PORT`                                           | `5432`                          | Host port for PostgreSQL                                      |
+| `API_PORT` / `WEB_PORT`                                 | `8000` / `3000`               | Host ports for the API and app                                |
+| `DATABASE_URL`                                            | localhost                         | SQLAlchemy URL (compose overrides this to reach`db`)        |
+| `JWT_SECRET`                                              | `change-me-in-production`       | Token signing key —**replace for any real deployment** |
+| `JWT_EXPIRE_MINUTES`                                      | `480`                           | Token lifetime                                                |
+| `UPLOAD_DIR` / `MAX_UPLOAD_MB`                          | `uploads` / `10`              | Where report files go, and the size cap                       |
+| `CORS_ORIGINS`                                            | `http://localhost:3000`         | Comma-separated allowed browser origins                       |
+| `SEED_ADMIN_USERNAME` / `SEED_ADMIN_PASSWORD`           | `frontdesk` / `physiodesk123` | Account the seed script creates                               |
+| `SEED_ON_START`                                           | `true`                          | Set`false` to start the container with an empty database    |
+| `NEXT_PUBLIC_API_URL`                                     | `http://localhost:8000`         | API base URL,**inlined at build time**                  |
 
 ---
 
