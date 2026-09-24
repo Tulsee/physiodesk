@@ -19,6 +19,7 @@ ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 ENV NEXT_TELEMETRY_DISABLED=1
 
 RUN npm run build
+RUN mkdir -p public
 
 # ---- runtime ----
 FROM node:22-alpine AS runner
