@@ -1,0 +1,52 @@
+databases:
+  - name: physiodesk-db
+    plan: free
+    databaseName: physiodesk
+    user: physiodesk
+
+services:
+  - type: web
+    name: physiodesk-api
+    runtime: docker
+    plan: free
+    rootDir: backend
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: physiodesk-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRE_MINUTES
+        value: "480"
+      - key: UPLOAD_DIR
+        value: /app/uploads
+      - key: MAX_UPLOAD_MB
+        value: "10"
+      # Public URL of the web service, e.g. https://physiodesk-web.onrender.com
+      - key: CORS_ORIGINS
+        sync: false
+      - key: SEED_ADMIN_USERNAME
+        value: frontdesk
+      - key: SEED_ADMIN_PASSWORD
+        sync: false
+      - key: SEED_ON_START
+        value: "true"
+    # disk:
+    #   name: uploads
+    #   mountPath: /app/uploads
+    #   sizeGB: 1
+
+  - type: web
+    name: physiodesk-web
+    runtime: docker
+    plan: free
+    rootDir: frontend
+    dockerfilePath: ./Dockerfile
+    envVars:
+      # Inlined at build time (Render passes env vars as Docker build args).
+      # Public URL of the API service, e.g. https://physiodesk-api.onrender.com
+      - key: NEXT_PUBLIC_API_URL
+        sync: false

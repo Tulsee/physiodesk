@@ -22,4 +22,5 @@ EXPOSE 8000
 # entrypoint.sh waits for Postgres, applies migrations, then seeds on first run.
 RUN chmod +x /app/entrypoint.sh
 ENTRYPOINT ["/app/entrypoint.sh"]
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Shell form so hosts that assign a port (e.g. Render's $PORT) are honoured.
+CMD ["sh", "-c", "exec uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
